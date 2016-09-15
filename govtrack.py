@@ -42,7 +42,17 @@ class Bill():
 		return self.billsByBillType
 
 	def bill_by_committee(self, committee_name):
-		apiCall = urllib2.urlopen("https://www.govtrack.us/api/v2/bill?committees=" + committee_name)
+		apiCall = urllib2.urlopen("https://www.govtrack.us/api/v2/committee?limit=306")
+		apiRead = apiCall.read()
+		committeeData = json.loads(apiRead)
+		apiCall.close()
+	
+		for committees in committeeData["objects"]:
+			if committee_name == committees["name"]:
+				committee_ID = committees["id"]	
+				break
+
+		apiCall = urllib2.urlopen("https://www.govtrack.us/api/v2/bill?committees=" + str(committee_ID))
 		apiRead = apiCall.read()
 		billData = json.loads(apiRead)
 		apiCall.close()
@@ -292,3 +302,40 @@ class Cosponsorship():
 		self.cosponsorInformation = cosponsorInformation
 
 		return self.cosponsorInformation
+
+
+
+print "This will run each method. Should you run into an error, smile, go back and make your updates!!\n"
+print "\nBill.bill_by_id(6031): "
+pprint.pprint(Bill().bill_by_id(6031))
+print "\nBill.bill_by_resolution_type(\"bill\"): "
+pprint.pprint(Bill().bill_by_resolution_type("bill"))
+print '\nBill.bill_by_bill_type("house bill"): '
+pprint.pprint(Bill().bill_by_bill_type("house bill"))
+print '\nBill.bill_by_committee("Energy and Power"): '
+pprint.pprint(Bill().bill_by_committee("Energy and Power"))
+print '\nBill.bill_by_congress(112): '
+pprint.pprint(Bill().bill_by_congress(112))
+print '\nBill.bill_by_cosponsor("Barack Obama"): '
+pprint.pprint(Bill().bill_by_cosponsor("Barack Obama"))
+print '\nBill.bill_by_current_status("prov kill veto"): '
+pprint.pprint(Bill().bill_by_current_status("prov kill veto") )
+print '\nBill.bill_by_current_status_date((2016,03,14)): '
+pprint.pprint(Bill().bill_by_current_status_date((2016,03,14)))
+print '\nBill.bill_by_introduced_date((2016,03,14)): '
+pprint.pprint(Bill().bill_by_introduced_date((2016,03,14)))
+print '\nBill.bill_by_terms(5928): '
+pprint.pprint(Bill().bill_by_terms(5928))
+print '\nBill.bill_by_sponsor("Shelley Capito"): '
+pprint.pprint(Bill().bill_by_sponsor("Shelley Capito"))
+
+print '\nCosponsorship().cosponsorship_by_bill(6031): '
+pprint.pprint(Cosponsorship().cosponsorship_by_bill(6031))
+print '\nCosponsorship().cosponsorship_by_join_date((2016,03,14)): '
+pprint.pprint(Cosponsorship().cosponsorship_by_join_date((2016,03,14)))
+print '\nCosponsorship().cosponsorship_by_person("Shelley Capito"): '
+pprint.pprint(Cosponsorship().cosponsorship_by_person("Shelley Capito"))
+print '\nCosponsorship().cosponsorship_by_role(596): '
+pprint.pprint(Cosponsorship().cosponsorship_by_role(596))
+print '\nCosponsorship().cosponsorship_by_cosponsorshipID(734897): '
+pprint.pprint(Cosponsorship().cosponsorship_by_cosponsorshipID(734897))
