@@ -3,7 +3,6 @@ import json
 import pprint
 
 class Bill():
-
 	
 	def __init__(self):
 		apiCall = urllib2.urlopen("https://www.govtrack.us/api/v2/bill")
@@ -13,7 +12,7 @@ class Bill():
 
 		self.allBills = billData
 
-	def __init__(self, bill_id):
+	def bill_by_id(self, bill_id):
 		apiCall = urllib2.urlopen("https://www.govtrack.us/api/v2/bill/" + str(bill_id))
 		apiRead = apiCall.read()
 		billData = json.loads(apiRead)
@@ -145,8 +144,6 @@ class Bill():
 
 		self.billsBySponsor = billData
 		return self.billsBySponsor
-		
-
 
 	def bill_by_terms(self, termID):
 
@@ -241,7 +238,9 @@ class Cosponsorship():
 		self.billsByCosponsor = billData
 		return self.billsByCosponsor
 
-	def cosponsorship_by_role(self, roleID):
+	# def cosponsorship_by_role(self, roleID):
+
+	# def cosponsorship_by_ID(self, ID):
 
 
 
