@@ -238,12 +238,57 @@ class Cosponsorship():
 		self.billsByCosponsor = billData
 		return self.billsByCosponsor
 
-	# def cosponsorship_by_role(self, roleID):
+	def cosponsorship_by_role(self, roleID):
+		apiCall = urllib2.urlopen("https://www.govtrack.us/api/v2/cosponsorship?role=" + str(roleID))
+		apiRead = apiCall.read()
+		cosponsorRoleData = json.loads(apiRead)
+		apiCall.close()
 
-	# def cosponsorship_by_ID(self, ID):
+		self.cosponsorshipRoleData = cosponsorRoleData
+
+		billList = []
+
+		for bill in cosponsorRoleData["objects"]:
+			billList.append({"bill": bill["bill"]})
+
+		for bill in billList:
+			apiCall = urllib2.urlopen("https://www.govtrack.us/api/v2/bill/" + str(bill["bill"]))
+			apiRead = apiCall.read()
+			billData = json.loads(apiRead)
+			apiCall.close()
+
+			bill["name"] = billData["title"]
+
+		self.billList = billList
+
+		return self.billList
 
 
+	def cosponsorship_by_cosponsorshipID(self, cosponsorshipID):
+		apiCall = urllib2.urlopen("https://www.govtrack.us/api/v2/cosponsorship/" + str(cosponsorshipID))
+		apiRead = apiCall.read()
+		cosponsorRoleData = json.loads(apiRead)
+		apiCall.close()
 
+		cosponsorInformation = {}
 
-pprint.pprint(Cosponsorship().cosponsorship_by_person("Barack Obama"))
-		
+		cosponsorInformation["cosponsorID"] = cosponsorRoleData["person"]	
+		cosponsorInformation["billID"] = cosponsorRoleData["bill"]
+
+		apiCall = urllib2.urlopen("https://www.govtrack.us/api/v2/bill/" + str(cosponsorInformation["billID"]))
+		apiRead = apiCall.read()
+		billData = json.loads(apiRead)
+		apiCall.close()
+
+		cosponsorInformation["billName"] = billData["title"]
+
+		apiCall = urllib2.urlopen("https://www.govtrack.us/api/v2/person/" + str(cosponsorInformation["cosponsorID"]))
+		apiRead = apiCall.read()
+		personData = json.loads(apiRead)
+		apiCall.close()
+
+		cosponsorInformation["cosponsorName"] = personData["name"]
+
+		self.cosponsorInformation = cosponsorInformation
+
+		return self.cosponsorInformation
